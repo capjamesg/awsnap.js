@@ -4,7 +4,7 @@ Navigate a website by clicking your fingers and saying the link to which you wan
 
 https://github.com/capjamesg/awsnap.js/assets/37276661/c4f50da0-a2ad-4532-85e8-6f6304912952
 
-## How to Set Up
+## How to Set Up 🛠️
 
 First, clone the project repository:
 
@@ -23,7 +23,7 @@ Then, open up the project. By default, the command above will serve a web page a
 
 _Note: The http.server method is recommended for local testing only. It is not built for production use. In production, you can serve the project files in any way you want; the files are static and don't require additional treatment beyond being on a web server._
 
-## How to Use
+## How to Use 💻
 
 When you open the project page, there are two commands you can use:
 
