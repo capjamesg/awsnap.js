@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Website Navigator</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
+        <style>
+            * {
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                box-sizing: border-box;
+            }
+            html, body, nav {
+                padding: 0;
+                margin: 0;
+            }
+            nav {
+                width: 100%;
+                height: 100%;
+                background-color: #f9f9f9;
+                border-bottom: 1px solid #eee;
+            }
+            a {
+                color: darkgreen;
+                text-decoration: none;
+                font-weight: bold;
+            }
+            main a {
+                font-weight: normal;
+            }
+            nav ul {
+                margin-top: 0;
+                padding-top: 1em;
+                display: flex;
+                list-style-type: none;
+                padding-left: 20px;
+            }
+            nav ul li {
+                margin-right: 1em;
+            }
+            main {
+                padding: 1em;
+            }
+            ul {
+                list-style-type: none;
+                padding-left: 0;
+            }
+            main ul li {
+                margin-bottom: 1em;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="/">Website Navigator</a></li>
+                <li>Navigate a website with your voice</li>
+            </ul>
+        </nav>
+        <main>
+            <h1>Website Navigator</h1>
+
+            <p>Navigate a website with sounds and spoken word.</p>
+            
+            <p>Say "go to" followed by a word and a link similar to or containing the word will be highlighted in yellow.</p>
+
+            <p>Click your fingers or clap your hands to make an emoji appear.</p>
+
+            <p id="message"></p>
+
+            <h2>Example Links</h2>
+            <ul class="article_list">
+        
+                <li><a href="https://jamesg.blog/2023/08/04/july-indieweb-carnival-roundup/" class="interview">July 2023 IndieWeb Carnival Roundup</a> (August 04, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/08/01/webispy-game/" class="interview">How I, Spy Works (My 60 Minute Website)</a> (August 01, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/07/30/website-in-an-hour-review/" class="interview">Build a Website in an Hour: Meetup in Review</a> (July 30, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/07/19/build-a-website-in-an-hour-event/" class="interview">Build a website in an hour event</a> (July 19, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/07/02/how-to-delete-a-webmention/" class="interview">How to Delete a Webmention</a> (July 02, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/07/01/indieweb-carnival/" class="interview">IndieWeb Carnival July 2023: Moments of Joy</a> (July 01, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/06/29/maintaining-mf2/" class="interview">Maintaining mf2py</a> (June 29, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/06/03/website-index/" class="interview">Creating an index for my personal website using NLP</a> (June 03, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/05/06/bsky-feeds/" class="interview">Announcing subscribable feeds for Bluesky profiles</a> (May 06, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/04/17/homepage-reorg/" class="interview">Reorganizing my site home page</a> (April 17, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/04/13/exploring-personal-websites/" class="interview">Exploring Personal Websites</a> (April 13, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/04/04/personal-websites-open-internet/" class="interview">Personal Websites and the Open Internet</a> (April 04, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/04/02/timehop-for-blogs/" class="interview">Throwbacks and Brainstorming Timehop for Blogs</a> (April 02, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/03/03/send-trackback/" class="interview">Send a Trackback in Two Lines of Code</a> (March 03, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/03/03/self-driving-car/" class="interview">Travelling in a Self-Driving Car</a> (March 03, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/02/27/iwc-principles/" class="interview">IndieWeb Principles Poster</a> (February 27, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/02/11/breakfast-and-coffee-recipes/" class="interview">Announcing recipe syndication for Breakfast and Coffee</a> (February 11, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/02/11/announcing-avtr-dev/" class="interview">Announcing avtr.dev</a> (February 11, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/01/23/first-talk/" class="interview">Giving my first talk</a> (January 23, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/01/03/coding-mental-health/" class="interview">Taking a break from personal projects: Mental health and coding</a> (January 03, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2023/01/02/100-days-of-indieweb/" class="interview">100 Days of IndieWeb Challenge</a> (January 02, 2023)</li>
+            
+                <li><a href="https://jamesg.blog/2022/12/30/beaker-browser-inspiration/" class="interview">A quote from the Beaker Browser wind-down notice</a> (December 30, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/12/30/highlight-js/" class="interview">Announcing highlight.js, an extension to highlight text on web pages</a> (December 30, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/12/30/indieweb-documentation/" class="interview">Documentation in chat: A case study from the IndieWeb</a> (December 30, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/12/30/seasonal-js/" class="interview">Seasonal emojis for your personal website</a> (December 30, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/12/30/mediawiki-sparkline/" class="interview">Create a sparkline showing your MediaWiki contributions</a> (December 30, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/12/02/webmention-talk/" class="interview">Decentralized Website Communication with Webmention (Talk Announcement)</a> (December 02, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/12/01/indieweb-chatgpt/" class="interview">The IndieWeb (according to ChatGPT)</a> (December 01, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/10/21/send-webmention-in-python/" class="interview">Send a Webmention in 10 (or fewer) lines of Python code</a> (October 21, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/10/12/hovercards/" class="interview">Adding hovercards to my website</a> (October 12, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/10/12/indieweb-utils-v-0-4-0/" class="interview">Announcing IndieWeb Utils v0.4.0 (with reflections on the library)</a> (October 12, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/10/11/fragmention-links/" class="interview">Adding fragmention links to my website</a> (October 11, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/10/10/announcing-indieweb-utils-v0-3-1/" class="interview">Announcing IndieWeb Utils v0.3.1</a> (October 10, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/09/11/review-breakfast-and-coffee/" class="interview">Adding review support to Breakfast and Coffee</a> (September 11, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/09/07/authorship-homepage/" class="interview">TIL: Fixing the author card on my home page h-feed</a> (September 07, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/09/06/time-machine/" class="interview">Building an 'on this day' feature for my website</a> (September 06, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/08/25/the-chase-firefox/" class="interview">Is Firefox a search engine?</a> (August 25, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/08/22/root-ksk-google-calendars/" class="interview">Subscribe to IANA Root KSK signing and Google algorithm update events</a> (August 22, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/08/21/indieweb-etherpad-archiver/" class="interview">Building an IRC archiver bot for the IndieWeb community</a> (August 21, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/08/03/one-liner-paths-sitemap/" class="interview">A one-liner to get root paths in my sitemap</a> (August 03, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/06/30/building-coffee-maps/" class="interview">Creating maps to share the coffee shops I have visited</a> (June 30, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/06/29/homebrew-website-club/" class="interview">Join Homebrew Website Club Today</a> (June 29, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/06/07/walled-gardens/" class="interview">Some thoughts on walled gardens</a> (June 07, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/05/31/coffee-poll-results/" class="interview">Poll: How much coffee you drink in a day? [Results]</a> (May 31, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/05/25/owning-my-github-links/" class="interview">Linking to GitHub repositories from my own site</a> (May 25, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/05/19/owning-my-links/" class="interview">Owning my links</a> (May 19, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/05/17/coffee-frequency/" class="interview">Poll: How much coffee you drink in a day?</a> (May 17, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/05/17/indieweb-social-polling/" class="interview">Distributed polls on your personal website</a> (May 17, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/05/16/plurality-indieweb/" class="interview">Plurality and the IndieWeb</a> (May 16, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/05/16/using-known/" class="interview">Using Known for posting notes, likes, and bookmarks</a> (May 16, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/03/17/my-website-typography/" class="interview">How can I improve the typography on my site?</a> (March 17, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/02/16/indieweb-utils-v020/" class="interview">IndieWeb Utils v0.2.0 is Out</a> (February 16, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/02/03/what-could-a-browser-be/" class="interview">What could a browser be?</a> (February 03, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/28/integrated-indieweb-services/" class="interview">Integrated IndieWeb Services</a> (January 28, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/24/social-reader-mobile-experience/" class="interview">How my social reader search features work</a> (January 24, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/21/my-social-reader-on-mobile/" class="interview">Improving my social reader experience on mobile</a> (January 21, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/20/annotating-my-site-code/" class="interview">Annotating my website page structure</a> (January 20, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/19/pwa-social-reader/" class="interview">Using my social reader as a progressive web application</a> (January 19, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/18/how-i-post-notes/" class="interview">How I post notes on my website</a> (January 18, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/17/social-readers/" class="interview">Social readers, a new way of thinking about social web interactions</a> (January 17, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/14/programming-and-cooking/" class="interview">Programming, cooking, and making what you want to use</a> (January 14, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/13/indieweb-search-pages-are-feeds/" class="interview">IndieWeb Search results are also feeds</a> (January 13, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/11/parse-indieweb-search-results-python/" class="interview">Parse IndieWeb Search in 15 lines of Python code</a> (January 11, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/10/scaling-indieweb-search/" class="interview">Scaling IndieWeb Search</a> (January 10, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/08/brainstorming-email-to-rss-part-2/" class="interview">Brainstorming Email to RSS: Part 2</a> (January 08, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/07/microsub-to-blogroll-idea/" class="interview">Microsub to Blogroll Idea</a> (January 07, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2022/01/06/brainstorming-email-to-rss/" class="interview">Brainstorming Email to RSS</a> (January 06, 2022)</li>
+            
+                <li><a href="https://jamesg.blog/2021/12/20/announcing-indieweb-utils/" class="interview">Announcing indieweb-utils</a> (December 20, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/12/17/indieweb-commitment-person-tags/" class="interview">IndieWeb New Years' Eve Commitment: Expanding my person tags</a> (December 17, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/11/30/moving-to-my-own-static-site-generator/" class="interview">Moving over to my own static site generator</a> (November 30, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/11/25/thank-you/" class="interview">A quick thank you to my readers</a> (November 25, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/11/23/building-a-feed-reader-part-1/" class="interview">Building a Feed Reader to Follow Blogs and Websites: Part I</a> (November 23, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/11/18/hypertext-coffee-pot/" class="interview">Introducing the HyperText Coffee Pot</a> (November 18, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/11/17/adding-dark-mode/" class="interview">Adding dark mode to my static Jekyll site</a> (November 17, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/11/16/i-love-my-website/" class="interview">I love my website</a> (November 16, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/11/12/retro-website-design/" class="interview">Exploring retro web design</a> (November 12, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/10/27/why-microformats/" class="interview">Why I publish microformats on my website</a> (October 27, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/10/25/reacjis/" class="interview">Adding Reacji support to my Micropub editor</a> (October 25, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/10/19/reply-context/" class="interview">Adding reply context to my social pages</a> (October 19, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/10/18/building-my-own-indieauth-endpoint/" class="interview">Building my own IndieAuth Endpoint</a> (October 18, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/09/22/webmention-receiver/" class="interview">Building my own webmention receiver</a> (September 22, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/09/20/thoughts-on-building-a-search-engine/" class="interview">Some things to keep in mind if you build a search engine</a> (September 20, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/09/15/why-i-am-building-indieweb-search/" class="interview">Why I am Building IndieWeb Search</a> (September 15, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/09/13/new-social-pages/" class="interview">My New Social Pages</a> (September 13, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/09/10/search-engine-direct-answers/" class="interview">How my search engine direct answers work</a> (September 10, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/09/06/indieweb-search/" class="interview">My search engine has moved to IndieWeb Search</a> (September 06, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/09/02/micropub-social/" class="interview">Sharing social interactions with Micropub</a> (September 02, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/08/06/weighing-search-results/" class="interview">Weighing search results on my personal search engine</a> (August 06, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/08/04/how-my-search-engine-works/" class="interview">How my blog search engine works, briefly</a> (August 04, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/07/22/search-engine-textrank/" class="interview">Implementing TextRank on my blog search engine</a> (July 22, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/07/21/building-a-blog-search-engine-part-ii/" class="interview">Building a search engine for my blog: Part II</a> (July 21, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/07/20/building-a-blog-search-engine/" class="interview">Building a search engine for my blog</a> (July 20, 2021)</li>
+            
+                <li><a href="/blogroll/" class="interview">Blogs I follow using RSS</a> (July 05, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/07/02/thermal-printer-hcard/" class="interview">The Thermal Printer Project: Printing hcards</a> (July 02, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/07/01/thermal-printer-project-indieweb-wiki/" class="interview">The Thermal Printer Project: IndieWeb Wiki</a> (July 01, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/06/28/thermal-printer-project-calendar/" class="interview">The Thermal Printer Project: How I Print Events</a> (June 28, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/06/22/thermal-printer-part-3/" class="interview">The Thermal Printer Project: Part III</a> (June 22, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/06/21/thermal-printer-part-2-point-five/" class="interview">The Thermal Printer Project: Part II.5</a> (June 21, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/06/18/thermal-printer-part-2/" class="interview">The Thermal Printer Project: Part II</a> (June 18, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/06/17/thermal-printer-part-1/" class="interview">The Thermal Printer Project: Part I</a> (June 17, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/06/16/why-i-blog/" class="interview">What made you start James' Coffee Blog?</a> (June 16, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/06/14/saving-blog-posts-in-docx/" class="interview">Saving my blog posts in one single .docx file</a> (June 14, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/06/04/printed-blog/" class="interview">The printed blog</a> (June 04, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2021/05/28/how-i-built-this-website/" class="interview">How I built this website</a> (May 28, 2021)</li>
+            
+                <li><a href="https://jamesg.blog/2020/10/05/cleaning-up-the-indieweb-webring/" class="interview">Cleaning Up the IndieWeb Webring</a> (October 05, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/10/05/reading-content-with-rss/" class="interview">Reading Content with RSS</a> (October 05, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/10/03/checking-my-webmentions-using-rss/" class="interview">Checking My Webmentions Using RSS</a> (October 03, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/10/02/displaying-webmentions-on-my-site/" class="interview">Displaying Webmentions on My Site</a> (October 02, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/29/why-i-indieweb/" class="interview">Why I IndieWeb</a> (September 29, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/25/writing-a-colophon/" class="interview">Writing a Colophon</a> (September 25, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/25/resisting-complexity-on-my-site/" class="interview">Resisting Complexity on My Site</a> (September 25, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/24/how-i-indieweb/" class="interview">How I IndieWeb</a> (September 24, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/13/social-interactions-on-the-web/" class="interview">Social Interactions on the Web</a> (September 13, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/12/micropub-and-publishing-content/" class="interview">Micropub and Publishing Content</a> (September 12, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/09/owning-my-coffee-data/" class="interview">Owning My Coffee Data</a> (September 09, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/04/how-i-use-webmentions/" class="interview">How I Use Webmentions</a> (September 04, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/03/my-first-homebrew-website-club-meeting/" class="interview">My First Homebrew Website Club Meeting</a> (September 03, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/02/scratching-my-itches/" class="interview">Scratching My Itches</a> (September 02, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/09/01/my-experience-with-jekyll/" class="interview">My Experience With Jekyll</a> (September 01, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/08/31/writing-on-the-indieweb-wiki/" class="interview">Writing on the IndieWeb Wiki</a> (August 31, 2020)</li>
+            
+                <li><a href="https://jamesg.blog/2020/08/30/adventures-on-the-indieweb/" class="interview">Adventures on the IndieWeb</a> (August 30, 2020)</li>
+            
+            </ul>
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/fuzzysort@2.0.4/fuzzysort.min.js"></script>
+        <script>
+                function getAllAnchorText () {
+                var anchors = document.getElementsByTagName("a");
+                var anchorTexts = [];
+                for (var i = 0; i < anchors.length; i++) {
+                    var words = anchors[i].innerText.split(" ");
+                    anchorTexts.push(anchors[i].innerText.toLowerCase());
+                    // for (var j = 0; j < words.length; j++) {
+                    //     // remove special characters
+                    //     words[j] = words[j].replace(/[^a-zA-Z ]/g, "");
+                    //     anchorTexts.push(words[j].toLowerCase());
+                    // }
+                }
+                return anchorTexts;
+            }
+
+            function createIFrame (href) {
+                // if iframe doesn't exist
+                if (document.getElementsByTagName("iframe").length == 0) {  
+                    var iframe = document.createElement("iframe");
+                } else {
+                    var iframe = document.getElementsByTagName("iframe")[0];
+                }
+
+                iframe.src = href;
+
+                iframe.style.position = "fixed";
+                iframe.style.top = "0";
+                iframe.style.right = "0";
+                iframe.style.width = "50%";
+                iframe.style.height = "50%";
+
+                document.body.appendChild(iframe);
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+            const SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
+
+            const keywords = `#JSGF V1.0; grammar words; public <word> = ${getAllAnchorText().join(' | ')} ;`;
+
+            const recognition = new SpeechRecognition();
+            const speechRecognitionList = new SpeechGrammarList();
+
+            speechRecognitionList.addFromString(keywords, 1);
+
+            recognition.grammars = speechRecognitionList;
+            recognition.lang = 'en-US';
+
+            var is_recognizing = false;
+
+            // when recognition finishes
+            recognition.onresult = (event) => {
+                var word = event.results[0][0].transcript;
+
+                console.log(word);
+
+                var textWithoutSymbols = word.replace(/[^a-zA-Z ]/g, "").toLowerCase();
+
+                var anchors = document.getElementsByTagName("a");
+
+                var objects = [];
+
+                for (var i = 0; i < anchors.length; i++) {
+                    objects.push({
+                        word: anchors[i].innerText.toLowerCase(),
+                        anchor: anchors[i]
+                    });
+                }
+
+                var results = fuzzysort.go(textWithoutSymbols, objects, {
+                    key: "word"
+                });
+
+                console.log("fuzzy", results);
+
+                var topResult = results[0];
+
+                var closestAnchor = topResult.obj.anchor;
+
+                closestAnchor.style.backgroundColor = "yellow";
+
+                createIFrame(closestAnchor.href);
+            }
+
+            const URL = "http://localhost:8000/";
+
+            async function createModel() {
+                const checkpointURL = URL + "model.json"; // model topology
+                const metadataURL = URL + "metadata.json"; // model metadata
+
+                const recognizer = speechCommands.create(
+                    "BROWSER_FFT", // fourier transform type, not useful to change
+                    undefined, // speech commands vocabulary feature, not useful for your models
+                    checkpointURL,
+                    metadataURL);
+
+                // check that model and metadata are loaded via HTTPS requests.
+                await recognizer.ensureModelLoaded();
+
+                return recognizer;
+            }
+
+            async function init() {
+                const recognizer = await createModel();
+                const classLabels = recognizer.wordLabels(); // get class labels
+
+                // listen() takes two arguments:
+                // 1. A callback function that is invoked anytime a word is recognized.
+                // 2. A configuration object with adjustable fields
+                recognizer.listen(result => {
+                    const scores = result.scores; // probability of prediction for each class
+                    // render the probability scores per class
+                    for (let i = 0; i < classLabels.length; i++) {
+                        const classPrediction = classLabels[i] + ": " + result.scores[i].toFixed(2);
+                        // if "click", show emoji
+                        // console.log(classPrediction);
+                        if (classLabels[i] == "Click" && result.scores[i].toFixed(2) > 0.50) {
+                            document.getElementById("message").innerHTML = "✌️";
+                        // } else if (classLabels[i] == "Clap" && result.scores[i].toFixed(2) > 0.50) {
+                        //     document.getElementById("message").innerHTML = "👏";
+                        // } else if (classLabels[i] == "Go to" && result.scores[i].toFixed(2) > 0.10) {
+                            document.getElementById("message").innerHTML = "Go to";
+                            console.log("go to");
+                            if (!is_recognizing) {
+                                is_recognizing = true;
+                                recognition.start();
+                            }
+                            is_recognizing = false;
+                            // stop listening after 5 seconds
+                            // setTimeout(() => recognizer.stopListening(), 5000);
+                            document.getElementById("message").innerHTML = "";
+                        }
+                    }
+                }, {
+                    includeSpectrogram: true, // in case listen should return result.spectrogram
+                    probabilityThreshold: 0.75,
+                    invokeCallbackOnNoiseAndUnknown: true,
+                    overlapFactor: 0.50 // probably want between 0.5 and 0.75. More info in README
+                });
+
+                // Stop the recognition in 5 seconds.
+                // setTimeout(() => recognizer.stopListening(), 5000);
+            }
+
+            init();
+        </script>
+    </body>
+</html>
