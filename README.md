@@ -34,6 +34,10 @@ When you open the project page, there are two commands you can use:
 1. Click your fingers then say a word or phrase featured in a link to open the link in an `iframe`.
 2. Clap your hands and an emoji will appear above the default list of links.
 
+## Inspiration 🌟
+
+This project was inspired by [Charlie Gerard's 2023 Beyond Tellerrand talk](https://beyondtellerrand.com/events/berlin-2023/speakers) and [Ana Rodrigues' State of the Browser 2023 talk](https://2023.stateofthebrowser.com/speaker/ana-rodrigues/)
+
 ## License
 
 This project is licensed under an [MIT license](LICENSE).
