@@ -399,6 +399,8 @@
                 closestAnchor.style.backgroundColor = "yellow";
 
                 createIFrame(closestAnchor.href);
+                
+                document.getElementById("message").innerHTML = "";
             }
 
             const URL = "https://capjamesg.github.io/awsnap.js/";
@@ -438,16 +440,12 @@
                         // } else if (classLabels[i] == "Clap" && result.scores[i].toFixed(2) > 0.50) {
                         //     document.getElementById("message").innerHTML = "👏";
                         // } else if (classLabels[i] == "Go to" && result.scores[i].toFixed(2) > 0.10) {
-                            document.getElementById("message").innerHTML = "Go to";
-                            console.log("go to");
+                            document.getElementById("message").innerHTML = "<p style='background-color: yellow;'>Listening</p>";
                             if (!is_recognizing) {
                                 is_recognizing = true;
                                 recognition.start();
                             }
                             is_recognizing = false;
-                            // stop listening after 5 seconds
-                            // setTimeout(() => recognizer.stopListening(), 5000);
-                            document.getElementById("message").innerHTML = "";
                         }
                     }
                 }, {
