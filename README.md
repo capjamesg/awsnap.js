@@ -38,6 +38,10 @@ When you open the project page, there are two commands you can use:
 
 This project was inspired by [Charlie Gerard's 2023 Beyond Tellerrand talk](https://beyondtellerrand.com/events/berlin-2023/speakers) and [Ana Rodrigues' State of the Browser 2023 talk](https://2023.stateofthebrowser.com/speaker/ana-rodrigues/).
 
+### Name Credits
+
+[Tantek](https://tantek.com) came up with the name `awsnap.js`. Thank you, Tantek!
+
 ## License
 
 This project is licensed under an [MIT license](LICENSE).
